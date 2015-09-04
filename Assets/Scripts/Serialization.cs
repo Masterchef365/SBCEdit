@@ -32,7 +32,7 @@ public class Serialization : MonoBehaviour { //Serialisation, parsing, and pathw
 		nodeSettings.setUpNode(lineCam, connectCallObject);
 		nodeSettings.setEnlosingType(enclosingTypeSetter);
 		newNode.transform.SetParent(worldCanvas.transform, false);
-		newNode.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(0.5f, 0.5f, 0));
+		newNode.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height / 2f, 0));
 		allNodes.Add(newNode);
 	}
 
@@ -42,7 +42,7 @@ public class Serialization : MonoBehaviour { //Serialisation, parsing, and pathw
 		nodeSettings.setUpNode(lineCam, connectCallObject);
 		nodeSettings.setEnlosingType(enclosingTypeSetter);
 		newNode.transform.SetParent(worldCanvas.transform, false);
-		newNode.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(0.5f, 0.5f, 0));
+		newNode.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height / 2f, 0));
 		allNodes.Add(newNode);
 	}
 
@@ -52,7 +52,7 @@ public class Serialization : MonoBehaviour { //Serialisation, parsing, and pathw
 		nodeSettings.setUpNode(connectCallObject);
 		nodeSettings.setEnlosingType(enclosingTypeSetter);
 		newNode.transform.SetParent(worldCanvas.transform, false);
-		newNode.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(0.5f, 0.5f, 0));
+		newNode.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height / 2f, 0));
 		allNodes.Add(newNode);
 	}
 
@@ -92,38 +92,46 @@ public class Serialization : MonoBehaviour { //Serialisation, parsing, and pathw
 		doc.Load(dir);
 
 		xIncrement = 0;
-		int yIncrement = 0;
+		yIncrement.Add(0);
 		foreach (XmlNode node in doc.DocumentElement.ChildNodes) {
-			XMLConvolution(node, startPoint, yIncrement);
-			yIncrement++;
+			XMLConvolution(node, startPoint);
+			yIncrement[0]++;
 		}
 		
 	}
 	
 	private int xIncrement = 0;
-	public void XMLConvolution (XmlNode rootNode, GameObject lastOutPort, int yPosition) { //LastOutPort is the parent node's out port GameObject - so these next nodes can be linked to it
+	private List<int> yIncrement = new List<int>(); //There is a running profile of how many places on the y axis on what level (x position) as to organize them
+	public void XMLConvolution (XmlNode rootNode, GameObject lastOutPort) { //LastOutPort is the parent node's out port GameObject - so these next nodes can be linked to it
 		xIncrement++;
+		if (yIncrement.Count - 1 < xIncrement) {
+			yIncrement.Add(0);
+		} 
 		if (rootNode.Attributes != null && rootNode.Attributes.Count > 0) { //
 			if (rootNode.HasChildNodes) {
-				GameObject newOutPort = newAttributeNode(rootNode, lastOutPort, xIncrement, yPosition); //Attribute node WITH MORE ATTACHED!
-				int yIncrement = 0;
+				GameObject newOutPort = newAttributeNode(rootNode, lastOutPort, xIncrement, yIncrement[xIncrement]); //Attribute node WITH MORE ATTACHED!
+				yIncrement[xIncrement] += 2;
+				//yIncrement[xIncrement] = 0;
 				foreach (XmlNode node in rootNode) {
-					XMLConvolution(node, newOutPort, yIncrement);
-					yIncrement++;
+					XMLConvolution(node, newOutPort);
+					//yIncrement[xIncrement]++; //Padding space
 				}
 			} else {
-				newAttributeNode(rootNode, lastOutPort, xIncrement, yPosition); //Attribute Node
+				newAttributeNode(rootNode, lastOutPort, xIncrement, yIncrement[xIncrement]); //Attribute Node
+				yIncrement[xIncrement] += 2;
 			}
 		} else {
 			if (rootNode.HasChildNodes) {
 				if (rootNode.FirstChild.Name == "#text") {
-					newDataNode(rootNode, lastOutPort, xIncrement, yPosition); //Data Node
+					newDataNode(rootNode, lastOutPort, xIncrement, yIncrement[xIncrement]); //Data Node
+					yIncrement[xIncrement]++;
 				} else {
-					GameObject newOutPort = newBranchNode(rootNode, lastOutPort, xIncrement, yPosition); //Branch node
-					int yIncrement = 0;
+					GameObject newOutPort = newBranchNode(rootNode, lastOutPort, xIncrement, yIncrement[xIncrement]); //Branch node
+					yIncrement[xIncrement]++;
+					//yIncrement[xIncrement] = 0;
 					foreach (XmlNode node in rootNode) {
-						XMLConvolution(node, newOutPort, yIncrement);
-						yIncrement++;
+						XMLConvolution(node, newOutPort);
+						//yIncrement++; //Padding space
 					}
 				}
 			}
@@ -142,7 +150,9 @@ public class Serialization : MonoBehaviour { //Serialisation, parsing, and pathw
 		if (connectToNode != null) { nodeSettings.setInConnection(connectToNode); }
 		nodeSettings.extractAttributes(node);
 		newNode.transform.SetParent(worldCanvas.transform, false);
-		newNode.transform.position = new Vector3(250f * xCoord, 250f * yCoord, 0f);
+
+		newNode.transform.position = new Vector3(550f * xCoord, 150f * yCoord, 0f);
+
 		connectToNode.GetComponent<BranchPort>().branches.Add(nodeSettings.inPort);
 		allNodes.Add(newNode);
 		return nodeSettings.outPort;
@@ -157,7 +167,9 @@ public class Serialization : MonoBehaviour { //Serialisation, parsing, and pathw
 		if (connectToNode != null) { nodeSettings.setInConnection(connectToNode); }
 		nodeSettings.setEnlosingType(node.Name);
 		newNode.transform.SetParent(worldCanvas.transform, false);
-		newNode.transform.position = new Vector3(250f * xCoord, 250f * yCoord, 0f);
+
+		newNode.transform.position = new Vector3(550f * xCoord, 150f * yCoord, 0f);
+
 		connectToNode.GetComponent<BranchPort>().branches.Add(nodeSettings.inPort);
 		allNodes.Add(newNode);
 		return nodeSettings.outPort;
@@ -173,7 +185,9 @@ public class Serialization : MonoBehaviour { //Serialisation, parsing, and pathw
 		nodeSettings.setEnlosingType(node.Name);
 		nodeSettings.setData(node.InnerXml);
 		newNode.transform.SetParent(worldCanvas.transform, false);
-		newNode.transform.position = new Vector3(250f * xCoord, 250f * yCoord, 0f);
+
+		newNode.transform.position = new Vector3(550f * xCoord, 150f * yCoord, 0f);
+		
 		connectToNode.GetComponent<BranchPort>().branches.Add(nodeSettings.inPort);
 		allNodes.Add(newNode);
 	}

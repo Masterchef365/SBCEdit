@@ -8,6 +8,7 @@ public class SplineDraw : MonoBehaviour
 	public List<GameObject> ports; //Ports contain their own XYZ coordinates and the coords of the ones they are connected to
 	public int subdivisions = 10;
 	public bool drawToMouse = false;
+	public bool useSplines = true; //Use splines instead of lines
 	public GameObject drawMouseTo;
 	public GameObject connectCallObject;
 	public LineTypeDictionary.valueClass colorDictionary;
@@ -15,6 +16,10 @@ public class SplineDraw : MonoBehaviour
 	void Start ()
 	{
 		colorDictionary = new LineTypeDictionary.valueClass (); 
+	}
+
+	public void setUseSplines (bool target) {
+		useSplines = target;
 	}
 
 	void OnPostRender ()
@@ -28,16 +33,21 @@ public class SplineDraw : MonoBehaviour
 				drawToMouse = false;
 			}
 
-			Vector3 handleA = new Vector3 (mouseWorld.x, drawMouseTo.transform.position.y, 0);
-			Vector3 handleB = new Vector3 (mouseWorld.x, mouseWorld.y, 0);
-			Vector3 handleC = new Vector3 (drawMouseTo.transform.position.x, drawMouseTo.transform.position.y, 0);
-			Vector3 handleD = new Vector3 (drawMouseTo.transform.position.x, mouseWorld.y, 0);
+			if (useSplines) {
+				Vector3 handleA = new Vector3 (mouseWorld.x, drawMouseTo.transform.position.y, 0);
+				Vector3 handleB = new Vector3 (mouseWorld.x, mouseWorld.y, 0);
+				Vector3 handleC = new Vector3 (drawMouseTo.transform.position.x, drawMouseTo.transform.position.y, 0);
+				Vector3 handleD = new Vector3 (drawMouseTo.transform.position.x, mouseWorld.y, 0);
 
-			GL.Color (colorDictionary.colors [(int)drawMouseTo.GetComponent<BranchPort> ().connectionType]);
+				GL.Color (colorDictionary.colors [(int)drawMouseTo.GetComponent<BranchPort> ().connectionType]);
 
-			for (float t = 0; t <= 1f; t = t + (1f/subdivisions)) {
-				GL.Vertex (ReturnCatmullRom (t, handleA, handleB, handleC, handleD));
-				GL.Vertex (ReturnCatmullRom (t + (1f / subdivisions), handleA, handleB, handleC, handleD));
+				for (float t = 0; t <= 1f; t = t + (1f/subdivisions)) {
+					GL.Vertex (ReturnCatmullRom (t, handleA, handleB, handleC, handleD));
+					GL.Vertex (ReturnCatmullRom (t + (1f / subdivisions), handleA, handleB, handleC, handleD));
+				}
+			} else { //Cheaper
+				GL.Vertex (drawMouseTo.transform.position);
+				GL.Vertex (mouseWorld);
 			}
 		}
 
@@ -47,22 +57,27 @@ public class SplineDraw : MonoBehaviour
 				List<GameObject> connections = port.GetComponent<BranchPort> ().branches;
 				foreach (GameObject connect in connections) {
 					if (connect) {
-						//Debug.DrawLine(port.transform.position, connect.transform.position, colorDictionary.colors [(int)port.GetComponent<BranchPort> ().connectionType]);
+						if (useSplines) {
+							//Debug.DrawLine(port.transform.position, connect.transform.position, colorDictionary.colors [(int)port.GetComponent<BranchPort> ().connectionType]);
 
-						Vector3 handleA = new Vector3 (port.transform.position.x, connect.transform.position.y, 0);
-						Vector3 handleB = new Vector3 (port.transform.position.x, port.transform.position.y, 0);
-						Vector3 handleC = new Vector3 (connect.transform.position.x, connect.transform.position.y, 0);
-						Vector3 handleD = new Vector3 (connect.transform.position.x, port.transform.position.y, 0);
+							Vector3 handleA = new Vector3 (port.transform.position.x, connect.transform.position.y, 0);
+							Vector3 handleB = new Vector3 (port.transform.position.x, port.transform.position.y, 0);
+							Vector3 handleC = new Vector3 (connect.transform.position.x, connect.transform.position.y, 0);
+							Vector3 handleD = new Vector3 (connect.transform.position.x, port.transform.position.y, 0);
 
-						try {
-							GL.Color (colorDictionary.colors [(int)port.GetComponent<BranchPort> ().connectionType]);
-						} finally {
+							try {
+								GL.Color (colorDictionary.colors [(int)port.GetComponent<BranchPort> ().connectionType]);
+							} finally {
 
-						}
+							}
 
-						for (float t = 0; t <= 1f; t = t + (1f/subdivisions)) {
-							GL.Vertex (ReturnCatmullRom (t, handleA, handleB, handleC, handleD));
-							GL.Vertex (ReturnCatmullRom (t + (1f / subdivisions), handleA, handleB, handleC, handleD));
+							for (float t = 0; t <= 1f; t = t + (1f/subdivisions)) {
+								GL.Vertex (ReturnCatmullRom (t, handleA, handleB, handleC, handleD));
+								GL.Vertex (ReturnCatmullRom (t + (1f / subdivisions), handleA, handleB, handleC, handleD));
+							}
+						} else {
+							GL.Vertex(port.transform.position);
+							GL.Vertex(connect.transform.position);
 						}
 					}
 				}
