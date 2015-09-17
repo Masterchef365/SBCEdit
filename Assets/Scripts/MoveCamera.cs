@@ -27,7 +27,8 @@ public class MoveCamera : MonoBehaviour {
 			startPoint = new Vector3(0,0,0);
 		}
 
-		//Space Limits
+		//Space Limits [EDIT] NOPE!
+		/*
 		if (transform.position.x > hardCamLimits.max.x) {
 			transform.position = new Vector3(hardCamLimits.max.x, transform.position.y, transform.position.z);
 		}
@@ -43,6 +44,7 @@ public class MoveCamera : MonoBehaviour {
 		if (transform.position.y < hardCamLimits.min.y) {
 			transform.position = new Vector3(transform.position.x, hardCamLimits.min.y, transform.position.z);
 		}
+		*/
 
 		//Camera Zoom
 		mainCam.orthographicSize += Input.mouseScrollDelta.y * -1f * mouseZoomMultiplier;

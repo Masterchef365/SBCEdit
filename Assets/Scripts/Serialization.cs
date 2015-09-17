@@ -152,6 +152,7 @@ public class Serialization : MonoBehaviour { //Serialisation, parsing, and pathw
 		newNode.transform.SetParent(worldCanvas.transform, false);
 
 		newNode.transform.position = new Vector3(550f * xCoord, 150f * yCoord, 0f);
+		newNode.transform.position += gameObject.transform.position;
 
 		connectToNode.GetComponent<BranchPort>().branches.Add(nodeSettings.inPort);
 		allNodes.Add(newNode);
@@ -169,6 +170,7 @@ public class Serialization : MonoBehaviour { //Serialisation, parsing, and pathw
 		newNode.transform.SetParent(worldCanvas.transform, false);
 
 		newNode.transform.position = new Vector3(550f * xCoord, 150f * yCoord, 0f);
+		newNode.transform.position += gameObject.transform.position;
 
 		connectToNode.GetComponent<BranchPort>().branches.Add(nodeSettings.inPort);
 		allNodes.Add(newNode);
@@ -187,7 +189,8 @@ public class Serialization : MonoBehaviour { //Serialisation, parsing, and pathw
 		newNode.transform.SetParent(worldCanvas.transform, false);
 
 		newNode.transform.position = new Vector3(550f * xCoord, 150f * yCoord, 0f);
-		
+		newNode.transform.position += gameObject.transform.position;
+
 		connectToNode.GetComponent<BranchPort>().branches.Add(nodeSettings.inPort);
 		allNodes.Add(newNode);
 	}

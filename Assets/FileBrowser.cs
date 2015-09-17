@@ -39,7 +39,7 @@ public class FileBrowser : MonoBehaviour {
 			}
 
 			foreach (string newFile in Directory.GetFiles(dir)) {
-				if (Path.GetExtension(newFile) == ".sbc" || Path.GetExtension(newFile) == ".xml") { //Valid files
+				if (Path.GetExtension(newFile) == ".sbc" || Path.GetExtension(newFile) == ".xml"|| Path.GetExtension(dir) == ".gsc") { //Valid files
 					GameObject newFileObject = (GameObject)Instantiate(filePrefab);
 					newFileObject.transform.SetParent(gameObject.transform);
 					newFileObject.GetComponent<FileObjectSetter>().setFileInfo("" + Path.GetFileName(newFile), new System.IO.FileInfo(newFile).Length + " B", newFile, gameObject);
@@ -64,7 +64,7 @@ public class FileBrowser : MonoBehaviour {
 
 	void setCurrentDirectory (string dir) {
 		directoryText.GetComponent<InputField>().text = dir;
-		if (File.Exists(dir) && (Path.GetExtension(dir) == ".sbc" || Path.GetExtension(dir) == ".xml")) { //Make sure the file is valid
+		if (File.Exists(dir) && (Path.GetExtension(dir) == ".sbc" || Path.GetExtension(dir) == ".xml"|| Path.GetExtension(dir) == ".gsc")) { //Make sure the file is valid
 			serializationNode.GetComponent<Serialization>().directory = dir;
 		}
 
