@@ -46,13 +46,13 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\FileBrowser.cs" />
-     <Compile Include="Assets\FileObjectSetter.cs" />
      <Compile Include="Assets\Scripts\AttributeObject.cs" />
      <Compile Include="Assets\Scripts\AttributePanelManager.cs" />
      <Compile Include="Assets\Scripts\BranchPort.cs" />
      <Compile Include="Assets\Scripts\ConnectAblePort.cs" />
      <Compile Include="Assets\Scripts\DragWithMouse.cs" />
+     <Compile Include="Assets\Scripts\FileBrowser.cs" />
+     <Compile Include="Assets\Scripts\FileObjectSetter.cs" />
      <Compile Include="Assets\Scripts\GridOptimized.cs" />
      <Compile Include="Assets\Scripts\LineTypeDictionary.cs" />
      <Compile Include="Assets\Scripts\MoveCamera.cs" />

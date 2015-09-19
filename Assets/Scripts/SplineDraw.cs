@@ -55,31 +55,34 @@ public class SplineDraw : MonoBehaviour
 		foreach (GameObject port in ports) {
 			if (port) {
 				List<GameObject> connections = port.GetComponent<BranchPort> ().branches;
-				foreach (GameObject connect in connections) {
-					if (connect) {
-						if (useSplines) {
-							//Debug.DrawLine(port.transform.position, connect.transform.position, colorDictionary.colors [(int)port.GetComponent<BranchPort> ().connectionType]);
+				if (port.GetComponent<BranchPort>().showLines) {
+					foreach (GameObject connect in connections) {
+						if (connect) {
+							if (useSplines) {
+								//Debug.DrawLine(port.transform.position, connect.transform.position, colorDictionary.colors [(int)port.GetComponent<BranchPort> ().connectionType]);
 
-							Vector3 handleA = new Vector3 (port.transform.position.x, connect.transform.position.y, 0);
-							Vector3 handleB = new Vector3 (port.transform.position.x, port.transform.position.y, 0);
-							Vector3 handleC = new Vector3 (connect.transform.position.x, connect.transform.position.y, 0);
-							Vector3 handleD = new Vector3 (connect.transform.position.x, port.transform.position.y, 0);
+								Vector3 handleA = new Vector3 (port.transform.position.x, connect.transform.position.y, 0);
+								Vector3 handleB = new Vector3 (port.transform.position.x, port.transform.position.y, 0);
+								Vector3 handleC = new Vector3 (connect.transform.position.x, connect.transform.position.y, 0);
+								Vector3 handleD = new Vector3 (connect.transform.position.x, port.transform.position.y, 0);
 
-							try {
+								try {
+									GL.Color (colorDictionary.colors [(int)port.GetComponent<BranchPort> ().connectionType]);
+								} finally {
+
+								}
+
+								for (float t = 0; t <= 1f; t = t + (1f/subdivisions)) {
+									GL.Vertex (ReturnCatmullRom (t, handleA, handleB, handleC, handleD));
+									GL.Vertex (ReturnCatmullRom (t + (1f / subdivisions), handleA, handleB, handleC, handleD));
+								}
+							} else {
 								GL.Color (colorDictionary.colors [(int)port.GetComponent<BranchPort> ().connectionType]);
-							} finally {
-
+								GL.Vertex(port.transform.position);
+								GL.Vertex(connect.transform.position);
 							}
-
-							for (float t = 0; t <= 1f; t = t + (1f/subdivisions)) {
-								GL.Vertex (ReturnCatmullRom (t, handleA, handleB, handleC, handleD));
-								GL.Vertex (ReturnCatmullRom (t + (1f / subdivisions), handleA, handleB, handleC, handleD));
-							}
-						} else {
-							GL.Vertex(port.transform.position);
-							GL.Vertex(connect.transform.position);
 						}
-					}
+				}
 				}
 			}
 		}

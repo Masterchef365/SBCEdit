@@ -92,6 +92,7 @@ public class Serialization : MonoBehaviour { //Serialisation, parsing, and pathw
 		doc.Load(dir);
 
 		xIncrement = 0;
+		yIncrement.Clear();
 		yIncrement.Add(0);
 		foreach (XmlNode node in doc.DocumentElement.ChildNodes) {
 			XMLConvolution(node, startPoint);
@@ -149,6 +150,7 @@ public class Serialization : MonoBehaviour { //Serialisation, parsing, and pathw
 		nodeSettings.setUpNode(lineCam, connectCallObject);
 		if (connectToNode != null) { nodeSettings.setInConnection(connectToNode); }
 		nodeSettings.extractAttributes(node);
+
 		newNode.transform.SetParent(worldCanvas.transform, false);
 
 		newNode.transform.position = new Vector3(550f * xCoord, 150f * yCoord, 0f);

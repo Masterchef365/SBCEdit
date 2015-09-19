@@ -14,6 +14,7 @@ public class ConnectAblePort : MonoBehaviour {
 	public GameObject hideObject; //Hidden when this node is connected to
 	public GameObject referForAttributes;
 	public GameObject connectCallObject;
+	public GameObject nodePanel;
 
 	void Start() {
 		colorDictionary = new LineTypeDictionary.valueClass(); 
@@ -62,4 +63,8 @@ public class ConnectAblePort : MonoBehaviour {
 		}
 	}
 
+	public void nodeEnable (bool showHide) {
+		nodePanel.SetActive(showHide);
+	}
+	
 }

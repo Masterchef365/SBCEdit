@@ -12,6 +12,7 @@ public class BranchPort : MonoBehaviour {
 	public GameObject branchContinuationObject; //If it is a double sided branch this would be the next destination.
 	public LineTypeDictionary.valueClass colorDictionary;
 	public string currentData;
+	public bool showLines = true;
 
 	void Start() {
 		colorDictionary = new LineTypeDictionary.valueClass(); 
@@ -43,5 +44,29 @@ public class BranchPort : MonoBehaviour {
 			}
 		}
 	}
+
+	public void showFurther (bool show) {
+		if (show) {
+			showLines = true;
+			objectConvolutionShowHide(branches, true);
+		} else {
+			showLines = false;
+			objectConvolutionShowHide(branches, false);
+		}
+	}
+	
+	void objectConvolutionShowHide (List<GameObject> starts, bool showHide) {
+		foreach (GameObject conPort in starts) {
+			if (conPort.GetComponent<ConnectAblePort>().referForContinuation != null) {
+				GameObject port = conPort.GetComponent<ConnectAblePort>().referForContinuation;
+				objectConvolutionShowHide(port.GetComponent<BranchPort>().branches, showHide);
+				port.GetComponent<BranchPort>().showLines = showHide;
+				conPort.GetComponent<ConnectAblePort>().nodeEnable(showHide);
+			} else {
+				conPort.GetComponent<ConnectAblePort>().nodeEnable(showHide);
+			}
+		}
+	}
+
 
 }

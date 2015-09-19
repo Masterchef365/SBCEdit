@@ -16,8 +16,14 @@ public class FileBrowser : MonoBehaviour {
 	public GameObject indicatorText;
 
 	void Start() {
-		setCurrentDirectory(@"C:\Users");
-		openDirectory(@"C:\Users");
+		string examplePath = System.IO.Directory.GetCurrentDirectory() + @"\Examples";
+		if (Directory.Exists(examplePath)) {
+			setCurrentDirectory(examplePath);
+			openDirectory(examplePath);
+		} else {
+			setCurrentDirectory(@"C:\");
+			openDirectory(@"C:\");
+		}
 	}
 
 	public void openDirectory (string dir) {
@@ -52,7 +58,7 @@ public class FileBrowser : MonoBehaviour {
 				setCurrentDirectory(dir);
 				setIndicationText(Path.GetFileName("Current File: " + dir));
 			} else { //It is nothing. It is a phantom.
-				setIndicationText("Nothing to see here, invalid directory");
+				setIndicationText("Invalid directory");
 			}
 
 		} 
@@ -72,6 +78,18 @@ public class FileBrowser : MonoBehaviour {
 
 	void setIndicationText (string text) {
 		indicatorText.GetComponent<Text>().text = text;
+	}
+
+	public void openExampleFolder () {
+		string examplePath = System.IO.Directory.GetCurrentDirectory() + @"\Examples";
+		setCurrentDirectory(examplePath);
+		openDirectory(examplePath);
+	}
+
+	public void openModsFolder () {
+		string modsFolder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + @"\SpaceEngineers\Mods";
+		setCurrentDirectory(modsFolder);
+		openDirectory(modsFolder);
 	}
 
 }
